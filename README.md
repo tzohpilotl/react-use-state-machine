@@ -20,3 +20,4 @@ A state machine definition is composed of the following:
 - [ ] Document the interface thoroughly
 - [ ] Add more tests using react-hooks-testing-library
 - [ ] Explore property based testing approaches
+- [ ] Publish to NPM
