@@ -2,7 +2,7 @@
   "name": "@react/use-state-machine",
   "version": "1.0.0",
   "description": "A state machine inside a react hook",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "test": "ava"
   },
