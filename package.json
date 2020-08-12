@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "parcel src/index.ts",
     "build": "parcel build src/index.ts",
-    "test": "ava"
+    "test": "ava",
+    "generateTypes": "tsc --declaration --declarationDir dist --emitDeclarationOnly --jsx react src/index.ts"
   },
   "repository": {
     "type": "git",
