@@ -2,10 +2,10 @@
 This is a state machine trapped inside a React hook.
 
 ## How To Use It
-To use you have to provide a state machine definition to the hook. In return, it will provide you with the current state, actions to trigger transitions from state to state and utility functions to query the state.
+To use it you have to provide a state machine definition to the hook. In return, it will provide you with the current state, actions to trigger transitions from state to state and utility functions to query the state.
 
 The state machine definition describes two things:
-- What do the possible are
+- What the possible states are
 - What are the valid transitions from state to state
 
 ## State Machine Definition
