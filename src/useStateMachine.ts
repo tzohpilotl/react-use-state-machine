@@ -1,121 +1,99 @@
-import { Dispatch, useReducer } from "react";
+import {Dispatch, useReducer, Reducer} from "react";
 
 interface Action<AT> {
   type: AT;
 }
 
-interface StateMachineDefinition<PossibleStates, ActionType> {
-  from: PossibleStates;
-  to: PossibleStates;
-  via: ActionType;
+export interface StateMachineState<State, States> {
+  state: State;
+  name: Extract<keyof States, string>;
 }
 
-interface UseStateMachine<ExternalState, PossibleStates, ActionType> {
-  states: Map<PossibleStates, ExternalState>;
-  edges: StateMachineDefinition<PossibleStates, ActionType>[];
+interface StateMachineDefinition<States, Transitions> {
+  from: keyof States;
+  to: keyof States;
+  via: Transitions;
 }
 
-interface LocalState<ExternalState, PossibleStates> {
-  value: ExternalState;
-  name: PossibleStates;
+interface UseStateMachine<States, Transitions> {
+  states: States;
+  edges: StateMachineDefinition<States, Transitions>[];
 }
 
-function buildGraph<
-  ExternalState extends any,
-  PossibleStates extends string,
-  ActionTypes extends string
->(edges: UseStateMachine<ExternalState, PossibleStates, ActionTypes>["edges"]) {
-  const graph = new Map<PossibleStates, Map<ActionTypes, PossibleStates>>();
-  edges.forEach(function({ from, to, via }) {
-    const currentTransitions = graph.get(from);
-    const transitions = currentTransitions
-      ? new Map([...currentTransitions, [via, to]])
-      : new Map([[via, to]]);
-    graph.set(from, transitions);
-  });
-  return graph;
+export interface StateMachineStates<State> {
+  [k: string]: StateMachineState<State, StateMachineStates<State>>
 }
 
-function createReducer<
-  ExternalState extends any,
-  PossibleStates extends string,
-  ActionTypes extends string
->(
-  states: UseStateMachine<ExternalState, PossibleStates, ActionTypes>["states"],
-  graph: Map<PossibleStates, NonNullable<Map<ActionTypes, PossibleStates>>>
+type Graph<S, T extends string> = {
+  [K in keyof S]: { [V in T]: keyof S };
+};
+
+function buildGraph<States extends {},
+  Transitions extends string>(edges: UseStateMachine<States, Transitions>["edges"]): Graph<States, Transitions> {
+  return edges.reduce((acc, {from, to, via}) => ({
+    ...acc,
+    [from]: {...acc[from], [via]: to},
+  }), {} as Graph<States, Transitions>);
+}
+
+function createReducer<State extends {},
+  States extends StateMachineStates<State>,
+  Transitions extends string>(
+  states: UseStateMachine<States, Transitions>["states"],
+  graph: Graph<States, Transitions>,
 ) {
-  return function(
-    state: LocalState<ExternalState, PossibleStates>,
-    action: Action<ActionTypes>
-  ): LocalState<ExternalState, PossibleStates> {
-    const currentStateTransitions = graph.get(state.name);
-    /* TODO: Deal with states that don't have a transition */
-    if (currentStateTransitions) {
-      if (currentStateTransitions.has(action.type)) {
-        /* TODO: Use .has as null check
-         * See https://github.com/microsoft/TypeScript/issues/9619
-         */
-        const name = currentStateTransitions.get(action.type);
-        /* TODO: Convince the compiler we won't have extraneous state names */
-        // @ts-ignore
-        const value = states.get(name);
-        // @ts-ignore
-        return { value, name };
-      }
+  return (
+    state: StateMachineState<State, States>,
+    action: Action<Transitions>,
+  ): StateMachineState<State, States> => {
+    const currentStateTransitions = graph[state.name];
+
+    if (!currentStateTransitions || !currentStateTransitions.hasOwnProperty(
+      action.type)) {
+      return state;
     }
-    return state;
+
+    const nextState = currentStateTransitions[action.type];
+    return states[nextState];
   };
 }
 
-function generateMutations<
-  ExternalState extends any,
-  PossibleStates extends string,
-  ActionTypes extends string
->(
-  edges: UseStateMachine<ExternalState, PossibleStates, ActionTypes>["edges"],
-  dispatch: Dispatch<Action<ActionTypes>>
+function generateMutations<State extends {},
+  States extends StateMachineStates<State>,
+  Transitions extends string>(
+  edges: UseStateMachine<States, Transitions>["edges"],
+  dispatch: Dispatch<Action<Transitions>>,
 ) {
-  const mutations = {} as { [key in ActionTypes]: () => void };
-  const verbs = edges.map(edge => edge.via);
-  verbs.forEach(function(verb) {
-    /* TODO: Find a way to be able to call .toLowerCase on verb here
-     * This limits us to define ActionTypes in lowercase because we'd get a
-     * TypeError when trying to destructure like { action1, action2 } (even if
-     * it'd work) when using "ACTION1 | ACTION2" as ActionTypes.
-     */
-    mutations[verb] = () => {
-      dispatch({ type: verb });
-    };
-  });
-  return mutations;
+  return edges.reduce((acc, {via}) => ({
+    ...acc,
+    [via]: () => dispatch({type: via}),
+  }), {} as { [key in Transitions]: () => void });
 }
 
-function getInitialState<K, V, T extends Map<K, V>>(states: T) {
-  const state = states.entries().next().value;
-  return {
-    name: state[0],
-    value: state[1]
-  };
+function getInitialState<State>(states: StateMachineStates<State>) {
+  const stateName = Object.keys(states)[0];
+  return states[stateName];
 }
 
-function useStateMachine<
-  ExternalState extends any,
-  PossibleStates extends string,
-  ActionTypes extends string
->({
-  states,
-  edges
-}: UseStateMachine<ExternalState, PossibleStates, ActionTypes>): [
-  ExternalState,
-  { [key in ActionTypes]: () => void }
+function useStateMachine<State extends {},
+  States extends StateMachineStates<State>,
+  Transitions extends string>({
+                                states,
+                                edges,
+                              }: UseStateMachine<States, Transitions>): [
+  State,
+  { [key in Transitions]: () => void }
 ] {
-  const graph = buildGraph<ExternalState, PossibleStates, ActionTypes>(edges);
-  const [state, dispatch] = useReducer(
-    createReducer(states, graph),
-    getInitialState(states)
+  const graph = buildGraph<States, Transitions>(edges);
+  const reducer = createReducer<State, States, Transitions>(
+    states, graph);
+  const [state, dispatch] = useReducer<Reducer<StateMachineState<State, States>, Action<Transitions>>>(
+    reducer,
+    getInitialState(states),
   );
-  const mutations = generateMutations(edges, dispatch);
-  return [state.value, mutations];
+  const mutations = generateMutations<State, States, Transitions>(edges,
+                                                                  dispatch);
+  return [state.state, mutations];
 }
 
-export { useStateMachine };
+export {useStateMachine};
