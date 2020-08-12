@@ -16,3 +16,7 @@ A state machine definition is composed of the following:
 - A map of the concrete possible states
 - A list describing the edges that link possible states to each other via actions
 
+## To Do
+- [ ] Document the interface thoroughly
+- [ ] Add more tests using react-hooks-testing-library
+- [ ] Explore property based testing approaches
