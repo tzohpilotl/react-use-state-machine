@@ -31,8 +31,5 @@
   },
   "peerDependencies": {
     "react": "*"
-  },
-  "dependencies": {
-    "react": "^16.13.1"
   }
 }
