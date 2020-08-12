@@ -4,6 +4,8 @@
   "description": "A state machine inside a react hook",
   "main": "index.js",
   "scripts": {
+    "dev": "parcel src/index.ts",
+    "build": "parcel build src/index.ts",
     "test": "ava"
   },
   "repository": {
@@ -20,5 +22,17 @@
   "bugs": {
     "url": "https://github.com/tzohpilotl/react-use-state-machine/issues"
   },
-  "homepage": "https://github.com/tzohpilotl/react-use-state-machine#readme"
+  "homepage": "https://github.com/tzohpilotl/react-use-state-machine#readme",
+  "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-externals": "^0.5.1",
+    "typescript": "^3.9.7"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "dependencies": {
+    "react": "^16.13.1"
+  }
 }
