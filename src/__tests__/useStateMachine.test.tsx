@@ -14,13 +14,15 @@ test("useStateMachine() changes the state if the state machine definition allows
     useStateMachine<State, States, Transitions>({ states, edges })
   );
 
-  t.true(result.current[0].active);
+  const [state, transitions] = result.current;
+
+  t.true(state.active);
 
   act(() => {
-    result.current[1].turnOff();
+    transitions.turnOff();
   });
 
-  t.false(result.current[0].active);
+  t.false(state.active);
 });
 
 test("useStateMachine() does not change the state if the state machine definition doesn't allow it", (t) => {
@@ -28,11 +30,13 @@ test("useStateMachine() does not change the state if the state machine definitio
     useStateMachine<State, States, Transitions>({ states, edges })
   );
 
-  t.true(result.current[0].active);
+  const [state, transitions] = result.current;
+
+  t.true(state.active);
 
   act(() => {
-    result.current[1].turnOn();
+    transitions.turnOn();
   });
 
-  t.true(result.current[0].active);
+  t.true(state.active);
 });
