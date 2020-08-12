@@ -25,13 +25,13 @@ A state machine definition is composed of the following:
 
 ### State Machine Definition Example
 
-The definition file, `stateMachine.ts`, looks like this:
-
-```typescript
-/* This definition describes a state machine that can be in one of two states
+`stateMachine.ts`
+This definition describes a state machine that can be in one of two states
 : "on" or "off". It has two transitions, one to transition from the "on
 " state to the "off" state: "turnOff"; and another one to transiton from the
- "off" state to the "on" state: "turnOn". */
+"off" state to the "on" state: "turnOn".
+
+```typescript
 import {
   StateMachineState,
   StateMachineStates,
@@ -83,11 +83,11 @@ export const edges: Transition<States, Transitions>[] = [
 ];
 ```
 
-An example React component using the hook, `component.tsx`:
+`component.tsx`
+This component configures the hook and uses the state machine's state and
+transitions in it's render function.
 
-```react
-/* This component configures the hook and uses the state machine's state and
- transitions in it's render function. */
+```typescript jsx
 import React from "react";
 import { useStateMachine } from "@react/use-state-machine";
 import { states, edges, State, States, Transitions } from "./stateMachine";
@@ -101,7 +101,8 @@ const Component = () => {
   });
 
   /* "turnOn" will only "work" when the machine is in "off" state and
- "turnOff" will only "work" when the machine is in "on" state. */ 
+ "turnOff" will only "work" when the machine is in "on" state. */
+
   return state.active ? (
     <div>
       <button onClick={transitions.turnOff}>Bye</button>
