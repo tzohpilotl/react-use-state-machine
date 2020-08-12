@@ -4,6 +4,7 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "jsx": "react",
-    "declaration": true
+    "declaration": true,
+    "declarationDir": "dist"
   }
 }

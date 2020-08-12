@@ -4,8 +4,8 @@
   "description": "A state machine inside a react hook",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "parcel src/index.ts",
-    "build": "parcel build src/index.ts",
+    "dev": "webpack --watch",
+    "build": "webpack",
     "test": "ava",
     "generateTypes": "tsc --declaration --declarationDir dist --emitDeclarationOnly --jsx react src/index.ts"
   },
@@ -36,14 +36,15 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.5",
-    "parcel-bundler": "^1.12.4",
-    "parcel-plugin-externals": "^0.5.1",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-test-renderer": "^16.13.0",
+    "ts-loader": "^8.0.2",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.7"
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   },
   "peerDependencies": {
     "react": "*"
