@@ -1,4 +1,4 @@
-import {StateMachineState, StateMachineStates} from "../useStateMachine";
+import { StateMachineState, StateMachineStates } from "../useStateMachine";
 
 interface Transition<S, T> {
   from: keyof S;
@@ -6,18 +6,20 @@ interface Transition<S, T> {
   via: T;
 }
 
-export interface State {
-  active: boolean;
-}
-
 // TODO: Check if this can be re enabled
-// Can't use this because of https://github.com/microsoft/TypeScript/issues/15300
-// export interface States extends StateMachineStates<State> {
-//   on: StateMachineState<State, States>,
-//   off: StateMachineState<State, States>,
-// };
+// Can't use this because of
+// https://github.com/microsoft/TypeScript/issues/15300 export interface States
+// extends StateMachineStates<State> { on: StateMachineState<State, States>,
+// off: StateMachineState<State, States>, };
 
-export type States = { on: StateMachineState<State, StateMachineStates<State>>, off: StateMachineState<State, StateMachineStates<State>> }
+export type State = {
+  active: boolean;
+};
+
+export type States = {
+  on: StateMachineState<State, StateMachineStates<State>>;
+  off: StateMachineState<State, StateMachineStates<State>>;
+};
 
 export type Transitions = "turnOn" | "turnOff";
 
