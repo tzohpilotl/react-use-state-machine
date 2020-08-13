@@ -9,9 +9,9 @@
     "test": "ava",
     "generateTypes": "tsc --declaration --declarationDir dist --emitDeclarationOnly --jsx react src/index.ts",
     "version:patch": "npm version patch",
-    "preversion": "npm test && npm run build && cp package.json ./dist/",
-    "version": "git add -A dist",
-    "postversion": "git push && git push --tags && npm deploy ./dist --access public"
+    "preversion": "npm test && npm run build",
+    "version": "cp package.json ./dist/ && git add -A dist",
+    "postversion": "git push && git push --tags && npm publish ./dist --access public"
   },
   "repository": {
     "type": "git",
