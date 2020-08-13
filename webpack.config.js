@@ -1,6 +1,8 @@
 const path = require("path");
 const webpack = require("webpack");
 
+const libraryName = "react-hook-state-machine";
+
 module.exports = ["source-map"].map((devtool) => ({
   devtool,
   mode: "development",
@@ -19,14 +21,12 @@ module.exports = ["source-map"].map((devtool) => ({
     extensions: [".tsx", ".ts", ".js"],
   },
   output: {
-    filename: "index.js",
+    filename: libraryName + ".js",
     path: path.resolve(__dirname, "dist"),
-    library: "useStateMachine",
+    library: libraryName,
     libraryTarget: "umd",
+    umdNamedDefine: true,
   },
   plugins: [new webpack.IgnorePlugin(/.*test.*/)],
-  optimization: {
-    runtimeChunk: true,
-  },
   externals: ["react"],
 }));
