@@ -37,7 +37,7 @@ jobs:
           cp package.json ./dist
           cd ./dist
           npm pack
-          echo "::set-output name=package_filename::$(ls | grep .tgz)}"
+          echo "::set-output name=package_filename::$(ls | grep .tgz)"
       - name: Upload Release Asset
         id: upload_release_asset 
         uses: actions/upload-release-asset@v1
